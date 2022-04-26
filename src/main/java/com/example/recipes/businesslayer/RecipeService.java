@@ -15,9 +15,9 @@ public class RecipeService {
         this.recipeRepository = recipeRepository;
     }
 
-    public long createRecipe(Recipe recipe) {
+    public RecipeId createRecipe(Recipe recipe) {
         Recipe savedRecipe = recipeRepository.save(recipe);
-        return savedRecipe.getId();
+        return new RecipeId(savedRecipe.getId());
     }
 
     public Optional<Recipe> findRecipe(long id) {

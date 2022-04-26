@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +27,14 @@ public class Recipe {
     @Column(name = "description")
     private String description;
 
-    @NotBlank
+    @NotEmpty
     @Size(min = 1)
     @ElementCollection
     @Column(name = "ingredients")
     @CollectionTable(name = "ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
     private List<String> ingredients = new ArrayList<>();
 
-    @NotBlank
+    @NotEmpty
     @Size(min = 1)
     @ElementCollection
     @Column(name = "directions")

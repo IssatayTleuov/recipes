@@ -1,11 +1,13 @@
 package com.example.recipes.presentation;
 
 import com.example.recipes.businesslayer.Recipe;
+import com.example.recipes.businesslayer.RecipeId;
 import com.example.recipes.businesslayer.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -21,13 +23,18 @@ public class RecipeController {
     }
 
     @PostMapping("/new")
-    public void createRecipe(@Valid @RequestBody Recipe recipe) {
-        recipeService.createRecipe(recipe);
+    public RecipeId createRecipe(@Valid @RequestBody Recipe recipe) {
+        return recipeService.createRecipe(recipe);
     }
 
     @GetMapping("/{id}")
     public Optional<Recipe> getRecipe(@PathVariable long id) {
-        return recipeService.findRecipe(id);
+        Optional<Recipe> recipe =  recipeService.findRecipe(id);
+        if (recipe.isPresent()) {
+            return recipe;
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/{id}")

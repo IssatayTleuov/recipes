@@ -11,16 +11,13 @@ public class RecipeService {
 
     private final RecipeRepository recipeRepository;
 
-    private Recipe recipe;
-
     public RecipeService(@Autowired RecipeRepository recipeRepository) {
         this.recipeRepository = recipeRepository;
     }
 
-    public long createRecipe(Recipe rp) {
-        recipeRepository.save(rp);
-        recipe.increment();
-        return recipe.getRecipeId();
+    public long createRecipe(Recipe recipe) {
+        Recipe savedRecipe = recipeRepository.save(recipe);
+        return savedRecipe.getId();
     }
 
     public Optional<Recipe> findRecipe(long id) {

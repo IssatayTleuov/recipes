@@ -27,20 +27,15 @@ public class Recipe {
 
     @NotBlank
     @Size(min = 1)
-    @OneToMany
-    @JoinColumn(name = "recipe_id")
-    private List<Ingredient> ingredients = new ArrayList<>();
+    @ElementCollection
+    @Column(name = "ingredients")
+    @CollectionTable(name = "ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
+    private List<String> ingredients = new ArrayList<>();
 
     @NotBlank
     @Size(min = 1)
-    @OneToMany
-    @JoinColumn(name = "recipe_id")
-    private List<Direction> directions = new ArrayList<>();
-
-    @Transient
-    private long recipeId = 0;
-
-    public void increment() {
-        recipeId++;
-    }
+    @ElementCollection
+    @Column(name = "directions")
+    @CollectionTable(name = "directions", joinColumns = @JoinColumn(name = "recipe_id"))
+    private List<String> directions = new ArrayList<>();
 }

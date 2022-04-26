@@ -5,9 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +19,10 @@ public class Recipe {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private long id;
+
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "description")
     private String description;
@@ -40,4 +40,10 @@ public class Recipe {
     @Column(name = "directions")
     @CollectionTable(name = "directions", joinColumns = @JoinColumn(name = "recipe_id"))
     private List<String> directions = new ArrayList<>();
+
+    public Recipe(String description, @NotEmpty @Size(min = 1) List<String> ingredients, @NotEmpty @Size(min = 1) List<String> directions) {
+        this.description = description;
+        this.ingredients = ingredients;
+        this.directions = directions;
+    }
 }

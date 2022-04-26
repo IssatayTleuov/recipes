@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -28,8 +29,8 @@ public class RecipeController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Recipe> getRecipe(@PathVariable long id) {
-        Optional<Recipe> recipe =  recipeService.findRecipe(id);
+    public Optional<Map<String, Object>> getRecipe(@PathVariable long id) {
+        Optional<Map<String, Object>> recipe =  recipeService.findRecipe(id);
         if (recipe.isPresent()) {
             return recipe;
         } else {

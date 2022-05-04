@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -51,6 +52,16 @@ public class RecipeService {
             recipeRepository.save(updateRecipe);
         });
         return Optional.of(removeRecipeId.apply(recipeRepository.findById(id)));
+    }
+
+    public Optional<List<Recipe>> searchByCategory(String category) {
+        List<Recipe> recipeList = recipeRepository.searchByCategory(category);
+        return Optional.ofNullable(recipeList);
+    }
+
+    public Optional<List<Recipe>> searchByName(String name) {
+        List<Recipe> recipeList = recipeRepository.searchByName(name);
+        return Optional.ofNullable(recipeList);
     }
 
     Function<Optional<Recipe>, Map<String, Object>> removeRecipeId = (recipeWithId) -> {

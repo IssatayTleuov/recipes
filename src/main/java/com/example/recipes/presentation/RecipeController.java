@@ -47,4 +47,9 @@ public class RecipeController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PutMapping("/{id}")
+    public Optional<Map<String, Object>> updateRecipe(@PathVariable long id,@Valid @RequestBody Recipe recipe) {
+        return recipeService.updateRecipe(id, recipe);
+    }
 }

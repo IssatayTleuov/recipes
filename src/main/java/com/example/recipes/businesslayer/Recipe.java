@@ -3,6 +3,7 @@ package com.example.recipes.businesslayer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -31,10 +32,8 @@ public class Recipe {
     @Column(name = "category")
     private String category;
 
-    @NotBlank
     @Column(name = "date")
-    @Temporal(TemporalType.TIMESTAMP)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @CreationTimestamp
     private LocalDateTime date;
 
     @NotBlank

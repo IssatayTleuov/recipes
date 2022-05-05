@@ -2,7 +2,9 @@ package com.example.recipes.businesslayer;
 
 import com.example.recipes.persistence.RecipeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -25,22 +27,15 @@ public class RecipeService {
         return new RecipeId(savedRecipe.getId());
     }
 
-    public Optional<Map<String, Object>> findRecipe(long id) {
-        Optional<Recipe> recipeWithId = recipeRepository.findById(id);
-        Map<String, Object> recipeWithOutId = new HashMap<>();
-        if (recipeWithId.isPresent()) {
-            recipeWithOutId = removeRecipeId.apply(recipeWithId);
-            return Optional.of(recipeWithOutId);
-        } else {
-            return Optional.empty();
-        }
+    public Optional<Recipe> findRecipe(long id) {
+        return recipeRepository.findById(id);
     }
 
     public void deleteRecipe(long id) {
         recipeRepository.deleteById(id);
     }
 
-    public Optional<Map<String, Object>> updateRecipe(long id, Recipe recipe) {
+    public void updateRecipe(long id, Recipe recipe) throws Exception {
         Optional<Recipe> currentRecipe = recipeRepository.findById(id);
         currentRecipe.ifPresent(updateRecipe -> {
             updateRecipe.setName(recipe.getName());
@@ -51,7 +46,9 @@ public class RecipeService {
             updateRecipe.setDirections(recipe.getDirections());
             recipeRepository.save(updateRecipe);
         });
-        return Optional.of(removeRecipeId.apply(recipeRepository.findById(id)));
+        if (!currentRecipe.isPresent()) {
+            throw new Exception();
+        }
     }
 
     public Optional<List<Recipe>> searchByCategory(String category) {
@@ -64,6 +61,7 @@ public class RecipeService {
         return Optional.ofNullable(recipeList);
     }
 
+    @Deprecated
     Function<Optional<Recipe>, Map<String, Object>> removeRecipeId = (recipeWithId) -> {
         Map<String, Object> recipeWithOutId = new HashMap<>();
         recipeWithOutId.put("name", recipeWithId.get().getName());

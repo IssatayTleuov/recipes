@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,8 +31,8 @@ public class RecipeController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Map<String, Object>> getRecipe(@PathVariable long id) {
-        Optional<Map<String, Object>> recipe =  recipeService.findRecipe(id);
+    public Optional<Recipe> getRecipe(@PathVariable long id) {
+        Optional<Recipe> recipe =  recipeService.findRecipe(id);
         if (recipe.isPresent()) {
             return recipe;
         } else {
@@ -49,7 +51,26 @@ public class RecipeController {
     }
 
     @PutMapping("/{id}")
-    public Optional<Map<String, Object>> updateRecipe(@PathVariable long id,@Valid @RequestBody Recipe recipe) {
-        return recipeService.updateRecipe(id, recipe);
+    public ResponseEntity<HttpStatus> updateRecipe(@PathVariable long id,@Valid @RequestBody Recipe recipe) {
+        try {
+            recipeService.updateRecipe(id, recipe);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/search")
+    public Optional<List<Recipe>> searchByParam(@RequestParam Map<String, String> allParams) {
+        if (allParams.size() == 1) {
+            if (allParams.containsKey("category")) {
+                return recipeService.searchByCategory(allParams.get("category"));
+            } else if (allParams.containsKey("name")) {
+                return recipeService.searchByName(allParams.get("name"));
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return Optional.of(Collections.emptyList());
     }
 }

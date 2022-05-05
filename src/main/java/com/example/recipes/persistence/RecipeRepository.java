@@ -11,19 +11,35 @@ import java.util.List;
 @Repository
 public interface RecipeRepository extends CrudRepository<Recipe, Long> {
 
-    @Query(value = "SELECT r.name, " +
+    @Query(value = "select r.id, " +
+            "r.name, " +
             "r.category, " +
             "r.date, " +
             "r.description, " +
-            "r.ingredients, " +
-            "r.directions FROM Recipe r WHERE r.category = :category")
+            "string_agg(i.ingredients, ', '), " +
+            "string_agg(d.directions, ', ') " +
+            "from recipes r " +
+            "join ingredients i on r.id = i.recipe_id " +
+            "join directions d on r.id = d.recipe_id " +
+            "where r.category = :category " +
+            "group by r.id " +
+            "order by r.date desc;",
+    nativeQuery = true)
     List<Recipe> searchByCategory(@Param("category") String category);
 
-    @Query(value = "SELECT r.name, " +
+    @Query(value = "select r.id, " +
+            "r.name, " +
             "r.category, " +
             "r.date, " +
             "r.description, " +
-            "r.ingredients, " +
-            "r.directions FROM Recipe r WHERE r.category = :name")
+            "string_agg(i.ingredients, ', '), " +
+            "string_agg(d.directions, ', ') " +
+            "from recipes r " +
+            "join ingredients i on r.id = i.recipe_id " +
+            "join directions d on r.id = d.recipe_id " +
+            "where r.name = :name " +
+            "group by r.id " +
+            "order by r.date desc;",
+            nativeQuery = true)
     List<Recipe> searchByName(@Param("name") String name);
 }

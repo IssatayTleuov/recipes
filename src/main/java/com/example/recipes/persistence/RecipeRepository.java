@@ -21,7 +21,7 @@ public interface RecipeRepository extends CrudRepository<Recipe, Long> {
             "from recipes r " +
             "join ingredients i on r.id = i.recipe_id " +
             "join directions d on r.id = d.recipe_id " +
-            "where r.category = :category " +
+            "where r.category ilike :category " +
             "group by r.id " +
             "order by r.date desc;",
     nativeQuery = true)
@@ -37,7 +37,7 @@ public interface RecipeRepository extends CrudRepository<Recipe, Long> {
             "from recipes r " +
             "join ingredients i on r.id = i.recipe_id " +
             "join directions d on r.id = d.recipe_id " +
-            "where r.name = :name " +
+            "where r.name ilike %:name% " +
             "group by r.id " +
             "order by r.date desc;",
             nativeQuery = true)

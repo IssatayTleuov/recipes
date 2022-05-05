@@ -62,7 +62,7 @@ public class RecipeController {
 
     @GetMapping("/search")
     public Optional<List<Recipe>> searchByParam(@RequestParam Map<String, String> allParams) {
-        if (allParams.size() == 1) {
+        if (allParams.size() == 1 && allParams.containsKey("category") || allParams.containsKey("name")) {
             if (allParams.containsKey("category")) {
                 return recipeService.searchByCategory(allParams.get("category"));
             } else if (allParams.containsKey("name")) {

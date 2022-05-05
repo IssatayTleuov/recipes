@@ -46,7 +46,7 @@ public class RecipeService {
             updateRecipe.setDirections(recipe.getDirections());
             recipeRepository.save(updateRecipe);
         });
-        if (!currentRecipe.isPresent()) {
+        if (currentRecipe.isEmpty()) {
             throw new Exception();
         }
     }

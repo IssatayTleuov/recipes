@@ -11,23 +11,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
-public class RegisterController {
+public class RegistrationController {
 
     private final UserService userService;
 
-    public RegisterController(@Autowired UserService userService) {
+    public RegistrationController(@Autowired UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping("/register")
     public ResponseEntity<HttpStatus> register(@Valid @RequestBody User user) {
-        try {
+        if (Objects.equals(userService.findUserByEmail(user.getEmail()), null)) {
             userService.saveUser(user);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
+        } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

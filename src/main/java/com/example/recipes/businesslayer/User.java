@@ -19,12 +19,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column
     @Email
+    @Column(name = "email")
     private String email;
 
-    @Column
     @NotBlank
     @Size(min = 8)
+    @Column(name = "password")
     private String password;
+
+    @OneToOne(mappedBy = "user")
+    private Recipe recipe;
 }

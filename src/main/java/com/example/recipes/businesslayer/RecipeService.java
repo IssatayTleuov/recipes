@@ -1,8 +1,11 @@
 package com.example.recipes.businesslayer;
 
 import com.example.recipes.persistence.RecipeRepository;
+import com.example.recipes.persistence.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,12 +20,16 @@ import java.util.function.Function;
 public class RecipeService {
 
     private final RecipeRepository recipeRepository;
+    private final UserRepository userRepository;
 
-    public RecipeService(@Autowired RecipeRepository recipeRepository) {
+    public RecipeService(@Autowired RecipeRepository recipeRepository, @Autowired UserRepository userRepository) {
         this.recipeRepository = recipeRepository;
+        this.userRepository = userRepository;
     }
 
-    public RecipeId createRecipe(Recipe recipe) {
+    public RecipeId createRecipe(Recipe recipe, UserDetails userDetails) {
+        User currentUser = userRepository.findUserByEmail(userDetails.getUsername());
+        recipe.setUser(currentUser);
         Recipe savedRecipe = recipeRepository.save(recipe);
         return new RecipeId(savedRecipe.getId());
     }

@@ -6,6 +6,8 @@ import com.example.recipes.businesslayer.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,8 +28,8 @@ public class RecipeController {
     }
 
     @PostMapping("/new")
-    public RecipeId createRecipe(@Valid @RequestBody Recipe recipe) {
-        return recipeService.createRecipe(recipe);
+    public RecipeId createRecipe(@Valid @RequestBody Recipe recipe, @AuthenticationPrincipal UserDetails userDetails) {
+        return recipeService.createRecipe(recipe, userDetails);
     }
 
     @GetMapping("/{id}")
@@ -41,22 +43,22 @@ public class RecipeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteRecipe(@PathVariable long id) {
+    public ResponseEntity<HttpStatus> deleteRecipe(@PathVariable long id, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            recipeService.deleteRecipe(id);
+            recipeService.deleteRecipe(id, userDetails);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<HttpStatus> updateRecipe(@PathVariable long id,@Valid @RequestBody Recipe recipe) {
+    public ResponseEntity<HttpStatus> updateRecipe(@PathVariable long id, @Valid @RequestBody Recipe recipe, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            recipeService.updateRecipe(id, recipe);
+            recipeService.updateRecipe(id, recipe, userDetails);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 

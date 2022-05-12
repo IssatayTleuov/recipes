@@ -1,8 +1,11 @@
 package com.example.recipes.businesslayer;
 
 import com.example.recipes.persistence.RecipeRepository;
+import com.example.recipes.persistence.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,12 +20,16 @@ import java.util.function.Function;
 public class RecipeService {
 
     private final RecipeRepository recipeRepository;
+    private final UserRepository userRepository;
 
-    public RecipeService(@Autowired RecipeRepository recipeRepository) {
+    public RecipeService(@Autowired RecipeRepository recipeRepository, @Autowired UserRepository userRepository) {
         this.recipeRepository = recipeRepository;
+        this.userRepository = userRepository;
     }
 
-    public RecipeId createRecipe(Recipe recipe) {
+    public RecipeId createRecipe(Recipe recipe, UserDetails userDetails) {
+        User currentUser = userRepository.findUserByEmail(userDetails.getUsername());
+        recipe.setUser(currentUser);
         Recipe savedRecipe = recipeRepository.save(recipe);
         return new RecipeId(savedRecipe.getId());
     }
@@ -31,23 +38,35 @@ public class RecipeService {
         return recipeRepository.findById(id);
     }
 
-    public void deleteRecipe(long id) {
-        recipeRepository.deleteById(id);
-    }
-
-    public void updateRecipe(long id, Recipe recipe) throws Exception {
+    public void deleteRecipe(long id, UserDetails userDetails) throws Exception {
         Optional<Recipe> currentRecipe = recipeRepository.findById(id);
-        currentRecipe.ifPresent(updateRecipe -> {
-            updateRecipe.setName(recipe.getName());
-            updateRecipe.setCategory(recipe.getCategory());
-            updateRecipe.setDate(LocalDateTime.now());
-            updateRecipe.setDescription(recipe.getDescription());
-            updateRecipe.setIngredients(recipe.getIngredients());
-            updateRecipe.setDirections(recipe.getDirections());
-            recipeRepository.save(updateRecipe);
-        });
+        User user = userRepository.findUserByEmail(userDetails.getUsername());
         if (currentRecipe.isEmpty()) {
             throw new Exception();
+        } else if (currentRecipe.get().getUser().getId() == user.getId()) {
+            recipeRepository.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    public void updateRecipe(long id, Recipe recipe, UserDetails userDetails) throws Exception {
+        Optional<Recipe> currentRecipe = recipeRepository.findById(id);
+        User user = userRepository.findUserByEmail(userDetails.getUsername());
+        if (currentRecipe.isEmpty()) {
+            throw new Exception();
+        } else if (currentRecipe.get().getUser().getId() == user.getId()) {
+            currentRecipe.ifPresent(updateRecipe -> {
+                updateRecipe.setName(recipe.getName());
+                updateRecipe.setCategory(recipe.getCategory());
+                updateRecipe.setDate(LocalDateTime.now());
+                updateRecipe.setDescription(recipe.getDescription());
+                updateRecipe.setIngredients(recipe.getIngredients());
+                updateRecipe.setDirections(recipe.getDirections());
+                recipeRepository.save(updateRecipe);
+            });
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
     }
 

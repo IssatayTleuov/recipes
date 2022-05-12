@@ -48,7 +48,11 @@ public class RecipeController {
             recipeService.deleteRecipe(id, userDetails);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            if (e.getMessage().contains("403")) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
         }
     }
 
@@ -58,7 +62,11 @@ public class RecipeController {
             recipeService.updateRecipe(id, recipe, userDetails);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            if (e.getMessage().contains("403")) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
         }
     }
 

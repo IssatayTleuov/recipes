@@ -42,7 +42,7 @@ public class RecipeService {
         Optional<Recipe> currentRecipe = recipeRepository.findById(id);
         User user = userRepository.findUserByEmail(userDetails.getUsername());
         if (currentRecipe.isEmpty()) {
-            throw new Exception();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } else if (currentRecipe.get().getUser().getId() == user.getId()) {
             recipeRepository.deleteById(id);
         } else {
@@ -54,7 +54,7 @@ public class RecipeService {
         Optional<Recipe> currentRecipe = recipeRepository.findById(id);
         User user = userRepository.findUserByEmail(userDetails.getUsername());
         if (currentRecipe.isEmpty()) {
-            throw new Exception();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } else if (currentRecipe.get().getUser().getId() == user.getId()) {
             currentRecipe.ifPresent(updateRecipe -> {
                 updateRecipe.setName(recipe.getName());

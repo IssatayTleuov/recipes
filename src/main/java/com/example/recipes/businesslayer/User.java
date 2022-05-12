@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -19,7 +21,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Email
+    @Pattern(regexp = ".+@.+\\..+")
     @Column(name = "email")
     private String email;
 
@@ -28,6 +30,6 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToOne(mappedBy = "user")
-    private Recipe recipe;
+    @OneToMany(mappedBy = "user")
+    private List<Recipe> recipes;
 }

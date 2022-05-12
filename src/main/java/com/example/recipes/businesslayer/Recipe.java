@@ -56,8 +56,8 @@ public class Recipe {
     @CollectionTable(name = "directions", joinColumns = @JoinColumn(name = "recipe_id"))
     private List<String> directions = new ArrayList<>();
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
 }

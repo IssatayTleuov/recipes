@@ -38,23 +38,35 @@ public class RecipeService {
         return recipeRepository.findById(id);
     }
 
-    public void deleteRecipe(long id) {
-        recipeRepository.deleteById(id);
-    }
-
-    public void updateRecipe(long id, Recipe recipe) throws Exception {
+    public void deleteRecipe(long id, UserDetails userDetails) throws Exception {
         Optional<Recipe> currentRecipe = recipeRepository.findById(id);
-        currentRecipe.ifPresent(updateRecipe -> {
-            updateRecipe.setName(recipe.getName());
-            updateRecipe.setCategory(recipe.getCategory());
-            updateRecipe.setDate(LocalDateTime.now());
-            updateRecipe.setDescription(recipe.getDescription());
-            updateRecipe.setIngredients(recipe.getIngredients());
-            updateRecipe.setDirections(recipe.getDirections());
-            recipeRepository.save(updateRecipe);
-        });
+        User user = userRepository.findUserByEmail(userDetails.getUsername());
         if (currentRecipe.isEmpty()) {
             throw new Exception();
+        } else if (currentRecipe.get().getUser().getId() == user.getId()) {
+            recipeRepository.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    public void updateRecipe(long id, Recipe recipe, UserDetails userDetails) throws Exception {
+        Optional<Recipe> currentRecipe = recipeRepository.findById(id);
+        User user = userRepository.findUserByEmail(userDetails.getUsername());
+        if (currentRecipe.isEmpty()) {
+            throw new Exception();
+        } else if (currentRecipe.get().getUser().getId() == user.getId()) {
+            currentRecipe.ifPresent(updateRecipe -> {
+                updateRecipe.setName(recipe.getName());
+                updateRecipe.setCategory(recipe.getCategory());
+                updateRecipe.setDate(LocalDateTime.now());
+                updateRecipe.setDescription(recipe.getDescription());
+                updateRecipe.setIngredients(recipe.getIngredients());
+                updateRecipe.setDirections(recipe.getDirections());
+                recipeRepository.save(updateRecipe);
+            });
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
     }
 

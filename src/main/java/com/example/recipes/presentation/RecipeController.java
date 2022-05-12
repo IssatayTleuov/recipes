@@ -45,20 +45,20 @@ public class RecipeController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteRecipe(@PathVariable long id, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            recipeService.deleteRecipe(id);
+            recipeService.deleteRecipe(id, userDetails);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<HttpStatus> updateRecipe(@PathVariable long id,@Valid @RequestBody Recipe recipe) {
+    public ResponseEntity<HttpStatus> updateRecipe(@PathVariable long id, @Valid @RequestBody Recipe recipe, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            recipeService.updateRecipe(id, recipe);
+            recipeService.updateRecipe(id, recipe, userDetails);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 

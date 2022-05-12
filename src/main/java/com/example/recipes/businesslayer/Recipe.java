@@ -1,12 +1,16 @@
 package com.example.recipes.businesslayer;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,28 +23,41 @@ public class Recipe {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
+    @JsonIgnore
     private long id;
 
+    @NotBlank
+    @Column(name = "name")
+    private String name;
+
+    @NotBlank
+    @Column(name = "category")
+    private String category;
+
+    @Column(name = "date")
+    @CreationTimestamp
+    private LocalDateTime date;
+
+    @NotBlank
     @Column(name = "description")
     private String description;
 
-    @NotBlank
+    @NotEmpty
     @Size(min = 1)
-    @OneToMany
-    @JoinColumn(name = "recipe_id")
-    private List<Ingredient> ingredients = new ArrayList<>();
+    @ElementCollection
+    @Column(name = "ingredients")
+    @CollectionTable(name = "ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
+    private List<String> ingredients = new ArrayList<>();
 
-    @NotBlank
+    @NotEmpty
     @Size(min = 1)
-    @OneToMany
-    @JoinColumn(name = "recipe_id")
-    private List<Direction> directions = new ArrayList<>();
+    @ElementCollection
+    @Column(name = "directions")
+    @CollectionTable(name = "directions", joinColumns = @JoinColumn(name = "recipe_id"))
+    private List<String> directions = new ArrayList<>();
 
-    @Transient
-    private long recipeId = 0;
-
-    public void increment() {
-        recipeId++;
-    }
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
 }

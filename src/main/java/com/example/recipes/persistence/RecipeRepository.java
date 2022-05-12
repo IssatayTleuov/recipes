@@ -17,7 +17,8 @@ public interface RecipeRepository extends CrudRepository<Recipe, Long> {
             "r.date, " +
             "r.description, " +
             "string_agg(i.ingredients, ', '), " +
-            "string_agg(d.directions, ', ') " +
+            "string_agg(d.directions, ', '), " +
+            "r.user_id " +
             "from recipes r " +
             "join ingredients i on r.id = i.recipe_id " +
             "join directions d on r.id = d.recipe_id " +
@@ -33,7 +34,8 @@ public interface RecipeRepository extends CrudRepository<Recipe, Long> {
             "r.date, " +
             "r.description, " +
             "string_agg(i.ingredients, ', '), " +
-            "string_agg(d.directions, ', ') " +
+            "string_agg(d.directions, ', '), " +
+            "r.user_id " +
             "from recipes r " +
             "join ingredients i on r.id = i.recipe_id " +
             "join directions d on r.id = d.recipe_id " +
